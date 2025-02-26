@@ -85,7 +85,7 @@ def main():
             chars.clear()
 
         if len(all_rdm_lines) == 1:
-            new_code = f"{new_code};z=[chr(c) for c in {all_rdm_lines[0]}];code=''\nfor c in z:code+=c\nexec(code)"
+            new_code = f"{new_code}z=[chr(c) for c in {all_rdm_lines[0]}];code=''\nfor c in z:code+=c\nexec(code)"
         else:
             new_code += f"z=[]"
             for line in all_rdm_lines:
@@ -114,7 +114,7 @@ def main():
         encoded_code = base64.a85encode(new_code_bytes)
         exec_code = f"exec(__import__('base64').a85decode({encoded_code!r}))"
 
-        with open("./output/output.py", "w") as f:
+        with open("./output/obfuscated.py", "w") as f:
             f.write(exec_code)
 
         print(f"{len(exec_code.splitlines())} obfuscated lines generated.")
