@@ -3,11 +3,15 @@ import time
 import zlib
 import base64
 import random_string
+import shutil
 
-try:
-    os.remove("./output/obfuscated.py")
-except FileNotFoundError:
-    pass
+output_dir = "./output"
+pycache_dir = os.path.join(output_dir, "__pycache__")
+
+if os.path.exists(pycache_dir):
+    shutil.rmtree(pycache_dir)
+if os.path.exists(os.path.join(output_dir, "obfuscated.py")):
+    os.remove(os.path.join(output_dir, "obfuscated.py"))
 
 def main():
     os.system("cls")
@@ -94,7 +98,7 @@ def main():
 
         second_step_obf_lines = new_code.splitlines()
         
-        os.makedirs("./output", exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
 
         new_code = ""
 
@@ -114,8 +118,22 @@ def main():
         encoded_code = base64.a85encode(new_code_bytes)
         exec_code = f"exec(__import__('base64').a85decode({encoded_code!r}))"
 
-        with open("./output/obfuscated.py", "w") as f:
+        with open(os.path.join(output_dir, "obfuscated.py"), "w") as f:
             f.write(exec_code)
+
+        os.system("py -m compileall \"./output/obfuscated.py\" ")
+
+        with open(os.path.join(output_dir, "__pycache__", "obfuscated.cpython-313.pyc"), "rb") as f:
+            compiled_content = f.read()
+
+        if os.path.exists(pycache_dir):
+            shutil.rmtree(pycache_dir)
+        if os.path.exists(os.path.join(output_dir, "obfuscated.py")):
+            os.remove(os.path.join(output_dir, "obfuscated.py"))
+
+        with open(os.path.join(output_dir, "obfuscated.py"), "wb+") as f:
+            f.truncate(0)
+            f.write(compiled_content)
 
         print(f"{len(exec_code.splitlines())} obfuscated lines generated.")
 
